@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Colegio Montano - 7-Week ESL Reading Unit Plan</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        montano: {
+                            blue: '#1269A8',
+                            yellow: '#F7D615',
+                            teal: '#54887D',
+                            lightblue: '#88B5C7',
+                            olive: '#A6B046',
+                            bg: '#F2F5E9'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Segoe UI', 'Tahoma', 'Geneva', 'Verdana', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #F2F5E9;
+            color: #1a202c;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .board-card {
+            background: #ffffff;
+            border: 2px solid #1269A8;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px -5px rgba(18, 105, 168, 0.1), 0 8px 10px -6px rgba(18, 105, 168, 0.1);
+        }
+        .tab-btn {
+            transition: all 0.25s ease-in-out;
+        }
+        .tab-btn.active {
+            background-color: #1269A8;
+            color: #ffffff;
+            border-bottom: 4px solid #F7D615;
+            transform: translateY(-2px);
+        }
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .collapsible-content.open {
+            max-height: 1000px;
+        }
+        /* Custom scrollbar for interactive elements */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F2F5E9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #88B5C7;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #1269A8;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col p-2 md:p-4">
+
+    <!-- HEADER BAR WITH INSTITUTIONAL IDENTITY -->
+    <header class="bg-montano-blue text-white rounded-2xl p-4 mb-4 shadow-lg flex flex-wrap justify-between items-center border-b-4 border-montano-yellow gap-4">
+        <div class="flex items-center space-x-4">
+            <div class="bg-white p-2 rounded-xl shadow">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQyEop0yf6lZ7Jk9MILZxF1rBj4Oqs5esyhIQ&s" alt="Colegio Montano Logo" class="h-12 w-auto object-contain" onerror="this.src='https://placehold.co/120x50/1269A8/FFFFFF?text=MONTANO'">
+            </div>
+            <div>
+                <h1 class="text-xl md:text-2xl font-extrabold tracking-wide uppercase text-white flex items-center gap-2">
+                    <i class="fa-solid font-bold fa-chalkboard-user text-montano-yellow"></i> Interactive Digital Board
+                </h1>
+                <p class="text-xs md:text-sm text-montano-lightblue font-medium">Colegio Montano • Pedagogical Formative Model</p>
+            </div>
+        </div>
+
+        <!-- Class Metadata Header Details -->
+        <div class="flex flex-wrap items-center gap-2 md:gap-4 text-xs md:text-sm bg-blue-900/40 p-2 rounded-xl border border-montano-lightblue/30">
+            <div><span class="text-montano-yellow font-bold"><i class="fa-solid fa-user-tie"></i> Teacher:</span> Nicole De León</div>
+            <div><span class="text-montano-yellow font-bold"><i class="fa-solid fa-graduation-cap"></i> Grade:</span> 3rd Grade ESL</div>
+            <div><span class="text-montano-yellow font-bold"><i class="fa-solid fa-book"></i> Unit:</span> Unit 2 (Reading)</div>
+            <div><span class="text-montano-yellow font-bold"><i class="fa-solid fa-clock"></i> Duration:</span> 50 min/session</div>
+        </div>
+
+        <!-- Fullscreen Button -->
+        <button onclick="toggleFullScreen()" class="bg-montano-yellow text-montano-blue hover:bg-yellow-300 font-bold px-4 py-2 rounded-xl shadow flex items-center gap-2 transition duration-200">
+            <i class="fa-solid fa-expand" id="fullscreen-icon"></i>
+            <span class="hidden sm:inline" id="fullscreen-text">Fullscreen</span>
+        </button>
+    </header>
+
+    <!-- WEEK SELECTION CONTROLLER -->
+    <section class="mb-4 bg-white p-3 rounded-2xl shadow border-2 border-montano-lightblue flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <div class="flex items-center gap-2 font-bold text-montano-blue">
+            <i class="fa-solid fa-calendar-week text-xl text-montano-olive"></i>
+            <span>Select Weekly Class Plan:</span>
+        </div>
+        <div class="flex flex-wrap gap-1 md:gap-2">
+            <button onclick="switchWeek(1)" id="wbtn-1" class="week-btn px-3 py-1.5 rounded-lg font-bold text-xs md:text-sm bg-montano-blue text-white shadow">W1: Mar 15</button>
+            <button onclick="switchWeek(2)" id="wbtn-2" class="week-btn px-3 py-1.5 rounded-lg font-bold text-xs md:text-sm bg-montano-bg text-montano-blue hover:bg-montano-lightblue">W2: Mar 22</button>
+            <button onclick="switchWeek(3)" id="wbtn-3" class="week-btn px-3 py-1.5 rounded-lg font-bold text-xs md:text-sm bg-montano-bg text-montano-blue hover:bg-montano-lightblue">W3: Apr 5</button>
+            <button onclick="switchWeek(4)" id="wbtn-4" class="week-btn px-3 py-1.5 rounded-lg font-bold text-xs md:text-sm bg-montano-bg text-montano-blue hover:bg-montano-lightblue">W4: Apr 12</button>
+            <button onclick="switchWeek(5)" id="wbtn-5" class="week-btn px-3 py-1.5 rounded-lg font-bold text-xs md:text-sm bg-montano-bg text-montano-blue hover:bg-montano-lightblue">W5: Apr 19*</button>
+            <button onclick="switchWeek(6)" id="wbtn-6" class="week-btn px-3 py-1.5 rounded-lg font-bold text-xs md:text-sm bg-montano-bg text-montano-blue hover:bg-montano-lightblue">W6: Apr 26*</button>
+            <button onclick="switchWeek(7)" id="wbtn-7" class="week-btn px-3 py-1.5 rounded-lg font-bold text-xs md:text-sm bg-montano-bg text-montano-blue hover:bg-montano-lightblue">W7: Apr 30*</button>
+        </div>
+    </section>
+
+    <!-- PEDAGOGICAL FRAMEWORK BANNER (MONTANO MODEL & CNB) -->
+    <section class="board-card p-4 mb-4 bg-gradient-to-r from-blue-50 to-emerald-50">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Competency & Outcome -->
+            <div class="border-l-4 border-montano-blue pl-3">
+                <h3 class="text-xs font-bold text-montano-blue uppercase tracking-wider flex items-center gap-1">
+                    <i class="fa-solid fa-bullseye"></i> CNB Competency & Outcome
+                </h3>
+                <p class="text-xs text-gray-700 mt-1" id="pedagogy-cnb">
+                    <!-- Dynamic per week -->
+                </p>
+            </div>
+            <!-- Montano Habit -->
+            <div class="border-l-4 border-montano-yellow pl-3">
+                <h3 class="text-xs font-bold text-montano-blue uppercase tracking-wider flex items-center gap-1">
+                    <i class="fa-solid fa-star text-montano-yellow"></i> Montano Habit Integrated
+                </h3>
+                <p class="text-xs font-bold text-gray-800 mt-1" id="pedagogy-habit">
+                    <!-- Dynamic per week -->
+                </p>
+            </div>
+            <!-- Key Competencies & Resources -->
+            <div class="border-l-4 border-montano-teal pl-3">
+                <h3 class="text-xs font-bold text-montano-teal uppercase tracking-wider flex items-center gap-1">
+                    <i class="fa-solid fa-brain"></i> Key Skills & Materials
+                </h3>
+                <p class="text-xs text-gray-700 mt-1" id="pedagogy-skills">
+                    <!-- Dynamic per week -->
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAIN DIDACTIC SEQUENCE CONTAINER WITH INTERACTIVE TABS -->
+    <main class="flex-grow flex flex-col board-card p-4 md:p-6 mb-4">
+        <!-- TOP LESSON INFO HEADER -->
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-4 mb-4 border-b border-gray-200 gap-2">
+            <div>
+                <span class="inline-block px-3 py-1 bg-montano-olive text-white text-xs font-bold rounded-full mb-1" id="week-badge">Plan #1</span>
+                <h2 class="text-xl md:text-2xl font-bold text-montano-blue" id="lesson-title">Amazing Animal Senses</h2>
+                <p class="text-xs md:text-sm text-gray-500 font-medium" id="lesson-source">Source: Our World 3 Student Book (pp. 72, 73, 74)</p>
+            </div>
+            <div class="bg-montano-bg px-3 py-2 rounded-xl border border-montano-lightblue text-right">
+                <span class="text-xs font-bold text-gray-500 block">CLASS TIME ALLOCATION</span>
+                <span class="text-sm font-extrabold text-montano-blue"><i class="fa-regular fa-clock"></i> 50 Minutes Total</span>
+            </div>
+        </div>
+
+        <!-- FOUR MOMENTS TAB NAVIGATION -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-6">
+            <button onclick="switchTab('tab1')" id="tab-btn-tab1" class="tab-btn active p-3 rounded-xl font-bold text-xs md:text-sm flex flex-col items-center justify-center gap-1 border border-montano-blue text-montano-blue bg-montano-bg">
+                <span class="text-xs opacity-75">I) ~5 MIN</span>
+                <span class="flex items-center gap-1"><i class="fa-solid fa-bolt"></i> Warm-Up / Hook</span>
+            </button>
+            <button onclick="switchTab('tab2')" id="tab-btn-tab2" class="tab-btn p-3 rounded-xl font-bold text-xs md:text-sm flex flex-col items-center justify-center gap-1 border border-montano-blue text-montano-blue bg-montano-bg">
+                <span class="text-xs opacity-75">II) 20 MIN</span>
+                <span class="flex items-center gap-1"><i class="fa-solid fa-user-pen"></i> Individual Work</span>
+            </button>
+            <button onclick="switchTab('tab3')" id="tab-btn-tab3" class="tab-btn p-3 rounded-xl font-bold text-xs md:text-sm flex flex-col items-center justify-center gap-1 border border-montano-blue text-montano-blue bg-montano-bg">
+                <span class="text-xs opacity-75">III) 30 MIN</span>
+                <span class="flex items-center gap-1"><i class="fa-solid fa-users"></i> Cooperative Work</span>
+            </button>
+            <button onclick="switchTab('tab4')" id="tab-btn-tab4" class="tab-btn p-3 rounded-xl font-bold text-xs md:text-sm flex flex-col items-center justify-center gap-1 border border-montano-blue text-montano-blue bg-montano-bg">
+                <span class="text-xs opacity-75">IV) 15 MIN</span>
+                <span class="flex items-center gap-1"><i class="fa-solid fa-comments"></i> Plenary & Assessment</span>
+            </button>
+        </div>
+
+        <!-- TAB CONTENT PANELS -->
+        <div class="flex-grow">
+            <!-- TAB 1: INTRODUCCION MOTIVANTE -->
+            <div id="tab1" class="tab-panel space-y-4">
+                <div class="bg-blue-50 border-l-4 border-montano-blue p-4 rounded-r-xl">
+                    <h3 class="font-bold text-lg text-montano-blue flex items-center gap-2">
+                        <i class="fa-solid fa-lightbulb text-montano-yellow"></i> Moment I: Warm-Up & Brain Break (~5 mins)
+                    </h3>
+                    <p class="text-xs text-gray-600 mt-1">Goal: Activate prior knowledge, energize students, and introduce core reading context.</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm" id="tab1-content">
+                    <!-- Dynamic Content -->
+                </div>
+            </div>
+
+            <!-- TAB 2: TRABAJO INDIVIDUAL -->
+            <div id="tab2" class="tab-panel hidden space-y-4">
+                <div class="bg-teal-50 border-l-4 border-montano-teal p-4 rounded-r-xl">
+                    <h3 class="font-bold text-lg text-montano-teal flex items-center gap-2">
+                        <i class="fa-solid fa-book-open"></i> Moment II: Guided & Individual Reading Task (20 mins)
+                    </h3>
+                    <p class="text-xs text-gray-600 mt-1">Goal: Promote independent reading comprehension and active text processing (anti copy-paste).</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm" id="tab2-content">
+                    <!-- Dynamic Content -->
+                </div>
+            </div>
+
+            <!-- TAB 3: TRABAJO COOPERATIVO -->
+            <div id="tab3" class="tab-panel hidden space-y-4">
+                <div class="bg-amber-50 border-l-4 border-montano-yellow p-4 rounded-r-xl">
+                    <h3 class="font-bold text-lg text-gray-800 flex items-center gap-2">
+                        <i class="fa-solid fa-people-group text-montano-blue"></i> Moment III: Cooperative Team Activity (30 mins)
+                    </h3>
+                    <p class="text-xs text-gray-600 mt-1">Goal: Peer interaction, assigned team roles, and concrete output creation.</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm" id="tab3-content">
+                    <!-- Dynamic Content -->
+                </div>
+            </div>
+
+            <!-- TAB 4: PLENARIA Y SIMULADOR/JUEGO -->
+            <div id="tab4" class="tab-panel hidden space-y-4">
+                <div class="bg-green-50 border-l-4 border-montano-olive p-4 rounded-r-xl">
+                    <h3 class="font-bold text-lg text-montano-olive flex items-center gap-2">
+                        <i class="fa-solid fa-award"></i> Moment IV: Plenary & Interactive Quiz/Game (15 mins)
+                    </h3>
+                    <p class="text-xs text-gray-600 mt-1">Goal: Share solution routes, verify learning through quick interaction, and final evaluation.</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm" id="tab4-content">
+                    <!-- Dynamic Content -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- EVALUATION INSTRUMENT: INTERACTIVE RUBRIC / CHECKLIST FOR PLENARY -->
+    <section class="board-card p-4 md:p-6 mb-4">
+        <div class="flex justify-between items-center mb-4 border-b pb-2">
+            <h3 class="font-extrabold text-lg text-montano-blue flex items-center gap-2">
+                <i class="fa-solid fa-clipboard-check text-montano-yellow"></i> Plenary Interactive Checklist (Summative / Formative Group Assessment)
+            </h3>
+            <span class="text-xs bg-montano-blue text-white px-2 py-1 rounded-md font-bold">Rubric / Checklist</span>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs md:text-sm border-collapse">
+                <thead>
+                    <tr class="bg-montano-blue text-white">
+                        <th class="p-2 md:p-3 rounded-tl-lg">Evaluation Criteria</th>
+                        <th class="p-2 md:p-3">Excellent (3 pts)</th>
+                        <th class="p-2 md:p-3">Satisfactory (2 pts)</th>
+                        <th class="p-2 md:p-3">Needs Improvement (1 pt)</th>
+                        <th class="p-2 md:p-3 rounded-tr-lg text-center">Score Tracker</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 bg-white">
+                    <tr>
+                        <td class="p-2 md:p-3 font-bold text-gray-800">1. Subject Mastery & Oral Clarity</td>
+                        <td class="p-2 md:p-3 text-gray-600">Explains reading concepts clearly using unit vocabulary.</td>
+                        <td class="p-2 md:p-3 text-gray-600">Explains main ideas with minor vocabulary errors.</td>
+                        <td class="p-2 md:p-3 text-gray-600">Struggles to express basic ideas or vocabulary.</td>
+                        <td class="p-2 md:p-3 text-center">
+                            <select class="rubric-score border rounded p-1 text-xs bg-gray-50" onchange="calculateScore()">
+                                <option value="3">3 pts</option>
+                                <option value="2">2 pts</option>
+                                <option value="1">1 pt</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 md:p-3 font-bold text-gray-800">2. Logic & Solution Procedure</td>
+                        <td class="p-2 md:p-3 text-gray-600">Shows clear step-by-step logic and evidence from text.</td>
+                        <td class="p-2 md:p-3 text-gray-600">Shows answers but lacks strong text evidence.</td>
+                        <td class="p-2 md:p-3 text-gray-600">Procedure is unclear or incomplete.</td>
+                        <td class="p-2 md:p-3 text-center">
+                            <select class="rubric-score border rounded p-1 text-xs bg-gray-50" onchange="calculateScore()">
+                                <option value="3">3 pts</option>
+                                <option value="2">2 pts</option>
+                                <option value="1">1 pt</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 md:p-3 font-bold text-gray-800">3. Collaborative Work & Equity</td>
+                        <td class="p-2 md:p-3 text-gray-600">All team members participate with assigned roles.</td>
+                        <td class="p-2 md:p-3 text-gray-600">Most members participate active in discussion.</td>
+                        <td class="p-2 md:p-3 text-gray-600">Only one student presents or does all work.</td>
+                        <td class="p-2 md:p-3 text-center">
+                            <select class="rubric-score border rounded p-1 text-xs bg-gray-50" onchange="calculateScore()">
+                                <option value="3">3 pts</option>
+                                <option value="2">2 pts</option>
+                                <option value="1">1 pt</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 md:p-3 font-bold text-gray-800">4. Response to Plenary Questions</td>
+                        <td class="p-2 md:p-3 text-gray-600">Responds accurately and confidently to teacher questions.</td>
+                        <td class="p-2 md:p-3 text-gray-600">Responds with partial assistance or prompt.</td>
+                        <td class="p-2 md:p-3 text-gray-600">Unable to answer verification questions.</td>
+                        <td class="p-2 md:p-3 text-center">
+                            <select class="rubric-score border rounded p-1 text-xs bg-gray-50" onchange="calculateScore()">
+                                <option value="3">3 pts</option>
+                                <option value="2">2 pts</option>
+                                <option value="1">1 pt</option>
+                            </select>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="mt-4 flex justify-between items-center bg-montano-bg p-3 rounded-xl border border-montano-lightblue">
+            <span class="text-xs font-bold text-montano-blue">TOTAL SCORE: <span id="total-score-val" class="text-base text-montano-olive">12</span> / 12 points</span>
+            <button onclick="resetRubric()" class="text-xs bg-gray-200 hover:bg-gray-300 font-bold px-3 py-1 rounded-lg text-gray-700">Reset Rubric</button>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="text-center text-xs text-gray-500 py-2">
+        <p>© Colegio Montano - Planificación Didáctica Integrada • ESL 3rd Grade Reading • Unit 2</p>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC AND LESSON DATA -->
+    <script>
+        // Data Structure for all 7 Weeks
+        const weeklyData = {
+            1: {
+                badge: "Plan #1 • Week 1 (March 15)",
+                title: "Amazing Animal Senses",
+                source: "Our World 3 Student Book (pp. 72, 73, 74)",
+                cnb: "CNB: Identifies main ideas and specific details in informational texts about nature. Outcome: Answers True/False and completes chart on animal senses.",
+                habit: "Habit 1: Be Proactive (Taking initiative to explore how animals interact with their environment).",
+                skills: "Critical thinking, observation, communication. Materials: SB pp. 72-74, notebook, whiteboard.",
+                tab1: `
+                    <div class="space-y-3">
+                        <p class="text-sm font-semibold text-gray-800"><strong>Brain Break / Warm-Up (5 min):</strong> "Sensory Freeze Game"</p>
+                        <p class="text-xs text-gray-600">Teacher calls out a sense: <em>"Touch your toes with whiskers!" "Look up and down like a chameleon!"</em> Students act it out and freeze.</p>
+                        <div class="bg-montano-bg p-3 rounded-lg border border-montano-lightblue">
+                            <p class="text-xs font-bold text-montano-blue">Exploratory Question:</p>
+                            <p class="text-xs italic text-gray-700">"Imagine walking on your food to taste it! Which animal do you think does this?"</p>
+                        </div>
+                    </div>
+                `,
+                tab2: `
+                    <div class="space-y-4">
+                        <p class="text-sm font-semibold text-gray-800"><strong>Individual Task (20 min):</strong> Read Student Book pp. 72-73 and complete SB Ex. 2 & 3.</p>
+                        <div class="bg-gray-50 p-3 rounded-lg border text-xs space-y-2">
+                            <p class="font-bold text-montano-blue">Reading Passage Focus: Seals (whiskers), Spiders (leg hairs/hearing), Bears (smell 32km), Chameleons (360° eyes), Butterflies (feet taste).</p>
+                        </div>
+                        
+                        <!-- Collapsible Solution -->
+                        <div class="mt-3">
+                            <button onclick="toggleAccordion('acc-w1')" class="bg-montano-blue text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-2">
+                                <i class="fa-solid fa-key"></i> Show/Hide Hidden Solution (Self-Check)
+                            </button>
+                            <div id="acc-w1" class="collapsible-content bg-yellow-50 p-3 rounded-lg border border-yellow-300 mt-2 text-xs">
+                                <p class="font-bold text-montano-blue mb-1">Ex 2 Answers (T/F):</p>
+                                <p>1. Spiders have ears. <strong>[F - listen with leg hairs]</strong></p>
+                                <p>2. Bears can't smell very well. <strong>[F - smell 32km away]</strong></p>
+                                <p>3. Butterflies taste with their feet. <strong>[T]</strong></p>
+                                <p>4. Seals use whiskers to feel fish. <strong>[T]</strong></p>
+                                <p>5. Chameleons can look up and down at same time. <strong>[T]</strong></p>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                tab3: `
+                    <div class="space-y-3">
+                        <p class="text-sm font-semibold text-gray-800"><strong>Cooperative Task (30 min):</strong> "Animal Super-Sense Matrix"</p>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-2 text-xs">
+                            <div class="bg-blue-50 p-2 rounded border"><strong>Role 1: Reader</strong> - Reads animal facts aloud to pair.</div>
+                            <div class="bg-teal-50 p-2 rounded border"><strong>Role 2: Writer</strong> - Fills out comparative sense chart.</div>
+                            <div class="bg-yellow-50 p-2 rounded border"><strong>Role 3: Speaker</strong> - Prepares 2 sentences for plenary.</div>
+                        </div>
+                        <p class="text-xs text-gray-600"><strong>Product:</strong> Complete SB p.73 Ex 3 & p.74 chart comparing Human Senses vs. Animal Super Senses.</p>
+                    </div>
+                `,
+                tab4: `
+                    <div class="space-y-4">
+                        <p class="text-sm font-semibold text-gray-800"><strong>Plenary & Interactive Game (15 min):</strong> "Sense Match Trivia"</p>
+                        <div class="bg-montano-bg p-3 rounded-xl border border-montano-olive">
+                            <p class="text-xs font-bold text-montano-blue mb-2"><i class="fa-solid fa-gamepad"></i> Quick Trivia Question:</p>
+                            <p class="text-xs text-gray-700">Which animal can smell food 32 kilometers away?</p>
+                            <div class="flex gap-2 mt-2">
+                                <button onclick="checkAnswer(this, false)" class="px-2 py-1 bg-white border rounded text-xs">A) Chameleon</button>
+                                <button onclick="checkAnswer(this, true)" class="px-2 py-1 bg-white border rounded text-xs">B) Bear</button>
+                                <button onclick="checkAnswer(this, false)" class="px-2 py-1 bg-white border rounded text-xs">C) Seal</button>
+                            </div>
+                            <div class="feedback-msg mt-2 text-xs font-bold hidden"></div>
+                        </div>
+                    </div>
+                `
+            },
+            2: {
+                badge: "Plan #2 • Week 2 (March 22)",
+                title: "Stinky Animals and Plants",
+                source: "Our World 3 Workbook (pp. 50, 51, 52)",
+                cnb: "CNB: Extracts key information regarding cause/effect in natural descriptions. Outcome: Completes graphic organizer on defensive smells.",
+                habit: "Habit 2: Begin with an End in Mind (Setting clear goals for understanding non-fiction text structures).",
+                skills: "Critical analysis, team decision making, vocabulary. Materials: WB pp. 50-52, markers.",
+                tab1: `
+                    <div class="space-y-3">
+                        <p class="text-sm font-semibold text-gray-800"><strong>Warm-Up (5 min):</strong> "Smell Imagination Game"</p>
+                        <p class="text-xs text-gray-600">Teacher presents images of apple trees vs. skunk/rafflesia. Students make 'yum' or 'yuck' faces and discuss why smells matter.</p>
+                    </div>
+                `,
+                tab2: `
+                    <div class="space-y-4">
+                        <p class="text-sm font-semibold text-gray-800"><strong>Individual Task (20 min):</strong> Read WB p. 50 "Stinky Animals and Plants".</p>
+                        <p class="text-xs text-gray-600">Focus vocabulary: <em>fresh water, eastern snake-necked turtle, skunk, rafflesia, rotten meat</em>.</p>
+                        
+                        <button onclick="toggleAccordion('acc-w2')" class="bg-montano-blue text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-2">
+                            <i class="fa-solid fa-key"></i> Show/Hide Hidden Solution (WB p. 51 Chart)
+                        </button>
+                        <div id="acc-w2" class="collapsible-content bg-yellow-50 p-3 rounded-lg border border-yellow-300 mt-2 text-xs">
+                            <p class="font-bold">Turtle:</p> Lives: fresh water in E. Australia | Smells like: skunk/terrible when caught.<br>
+                            <p class="font-bold mt-1">Rafflesia:</p> Grows: SE Asia | Smells like: old meat | Attracts: flies.
+                        </div>
+                    </div>
+                `,
+                tab3: `
+                    <div class="space-y-3">
+                        <p class="text-sm font-semibold text-gray-800"><strong>Cooperative Task (30 min):</strong> "Stinky Defense Poster"</p>
+                        <p class="text-xs text-gray-600">In pairs, complete WB p. 51 Ex 4 discussion: <em>"Would you like an Eastern snake-necked turtle at home? Why/Why not?"</em> Write a 3-sentence joint argument.</p>
+                    </div>
+                `,
+                tab4: `
+                    <div class="space-y-4">
+                        <p class="text-sm font-semibold text-gray-800"><strong>Plenary & Interactive Game (15 min):</strong> "Stinky Truth Trivia"</p>
+                        <div class="bg-montano-bg p-3 rounded-xl border border-montano-olive">
+                            <p class="text-xs font-bold text-montano-blue mb-2">Why does the rafflesia flower smell like old meat?</p>
+                            <div class="flex gap-2 mt-2">
+                                <button onclick="checkAnswer(this, true)" class="px-2 py-1 bg-white border rounded text-xs">A) To attract flies</button>
+                                <button onclick="checkAnswer(this, false)" class="px-2 py-1 bg-white border rounded text-xs">B) To scare birds</button>
+                            </div>
+                            <div class="feedback-msg mt-2 text-xs font-bold hidden"></div>
+                        </div>
+                    </div>
+                `
+            },
+            3: {
+                badge: "Plan #3 • Week 3 (April 5)",
+                title: "Amazing Rain Forests",
+                source: "Our World 3 Student Book (pp. 88, 89, 90)",
+                cnb: "CNB: Classifies information hierarchically in visual diagrams. Outcome: Labels rain forest layers and animal habitats.",
+                habit: "Habit 6: Synergize (Combining team knowledge to build a complete rainforest canopy model).",
+                skills: "Categorization, teamwork, environmental awareness. Materials: SB pp. 88-90, chart paper.",
+                tab1: `
+                    <div class="space-y-3">
+                        <p class="text-sm font-semibold text-gray-800"><strong>Warm-Up (5 min):</strong> "Rainforest Soundstorm"</p>
+                        <p class="text-xs text-gray-600">Students rub hands (drizzle), snap fingers (rain), and pat knees (thunder) to simulate the 4 layers of a rainforest!</p>
+                    </div>
+                `,
+                tab2: `
+                    <div class="space-y-4">
+                        <p class="text-sm font-semibold text-gray-800"><strong>Individual Task (20 min):</strong> Read SB p. 88 "A Rain Forest Has Four Parts".</p>
+                        <p class="text-xs text-gray-600">Layers: Emergent (tops), Canopy (leaves), Understory (dark/wet), Forest floor (insects/large animals).</p>
+                        
+                        <button onclick="toggleAccordion('acc-w3')" class="bg-montano-blue text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-2">
+                            <i class="fa-solid fa-key"></i> Show/Hide Hidden Solution (SB p.89 Ex 2)
+                        </button>
+                        <div id="acc-w3" class="collapsible-content bg-yellow-50 p-3 rounded-lg border border-yellow-300 mt-2 text-xs">
+                            1. Near equator | 2. Oxygen | 3. Light | 4. Birds | 5. Forest floor.
+                        </div>
+                    </div>
+                `,
+                tab3: `
+                    <div class="space-y-3">
+                        <p class="text-sm font-semibold text-gray-800"><strong>Cooperative Task (30 min):</strong> "4-Layer Diagram Mapping"</p>
+                        <p class="text-xs text-gray-600">Teams assign 1 layer per student (Emergent, Canopy, Understory, Forest Floor). Each student draws 2 animals in their assigned section and presents how they survive there.</p>
+                    </div>
+                `,
+                tab4: `
+                    <div class="space-y-4">
+                        <p class="text-sm font-semibold text-gray-800"><strong>Plenary & Interactive Quiz (15 min):</strong> "Layer Explorer"</p>
+                        <div class="bg-montano-bg p-3 rounded-xl border border-montano-olive">
+                            <p class="text-xs font-bold text-montano-blue mb-2">Where do jaguars and snakes live because it is dark and cool?</p>
+                            <div class="flex gap-2 mt-2">
+                                <button onclick="checkAnswer(this, false)" class="px-2 py-1 bg-white border rounded text-xs">A) Emergent layer</button>
+                                <button onclick="checkAnswer(this, true)" class="px-2 py-1 bg-white border rounded text-xs">B) Understory</button>
+                            </div>
+                            <div class="feedback-msg mt-2 text-xs font-bold hidden"></div>
+                        </div>
+                    </div>
+                `
+            },
+            4: {
+                badge: "Plan #4 • Week 4 (April 12)",
+                title: "The Coolest Animals Live in Antarctica!",
+                source: "Our World 3 Workbook (pp. 62, 63, 64)",
+                cnb: "CNB: Compares polar ecosystems and animal adaptations using textual evidence. Outcome: Fills comparison matrix on Antarctic species.",
+                habit: "Habit 3: Put First Things First (Prioritizing main details over decorative details).",
+                skills: "Comparative analysis, reading fluency, empathy for wildlife. Materials: WB pp. 62-64.",
+                tab1: `
+                    <div class="space-y-3">
+                        <p class="text-sm font-semibold text-gray-800"><strong>Warm-Up (5 min):</strong> "Penguin Waddle Brain Break"</p>
+                        <p class="text-xs text-gray-600">Students stand up, put hands to sides, and try keeping an imaginary egg on their feet like the father emperor penguin!</p>
+                    </div>
+                `,
+                tab2: `
+                    <div class="space-y-4">
+                        <p class="text-sm font-semibold text-gray-800"><strong>Individual Task (20 min):</strong> Read WB p. 62 "The Coolest Animals Live in Antarctica!".</p>
+                        <p class="text-xs text-gray-600">Key facts: Emperor penguin (father keeps egg warm on feet), Weddell seal (swims under ice for 45 mins), Arctic tern (flies between Arctic and Antarctica).</p>
+                        
+                        <button onclick="toggleAccordion('acc-w4')" class="bg-montano-blue text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-2">
+                            <i class="fa-solid fa-key"></i> Show/Hide Hidden Solution (WB p. 63 T/F)
+                        </button>
+                        <div id="acc-w4" class="collapsible-content bg-yellow-50 p-3 rounded-lg border border-yellow-300 mt-2 text-xs">
+                            1. Emperor penguin swim well [T] | 2. Father takes care of egg [T] | 3. Weddell seal swims under ice [T] | 4. Antarctica hot/sunny [F] | 5. Arctic tern flies to Arctic in summer [T].
+                        </div>
+                    </div>
+                `,
+                tab3: `
+                    <div class="space-y-3">
+                        <p class="text-sm font-semibold text-gray-800"><strong>Cooperative Task (30 min):</strong> "Antarctic Survival Expert Panel"</p>
+                        <p class="text-xs text-gray-600">Pairs complete WB p. 63 chart. Role A explains Penguin & Seal; Role B explains Arctic Tern & Polar Bear facts. Work together to answerWB p. 63 Ex 4 sentences.</p>
+                    </div>
+                `,
+                tab4: `
+                    <div class="space-y-4">
+                        <p class="text-sm font-semibold text-gray-800"><strong>Plenary & Interactive Quiz (15 min):</strong> "Polar Challenge"</p>
+                        <div class="bg-montano-bg p-3 rounded-xl border border-montano-olive">
+                            <p class="text-xs font-bold text-montano-blue mb-2">How long can a Weddell seal stay underwater?</p>
+                            <div class="flex gap-2 mt-2">
+                                <button onclick="checkAnswer(this, true)" class="px-2 py-1 bg-white border rounded text-xs">A) 45 minutes</button>
+                                <button onclick="checkAnswer(this, false)" class="px-2 py-1 bg-white border rounded text-xs">B) 10 minutes</button>
+                            </div>
+                            <div class="feedback-msg mt-2 text-xs font-bold hidden"></div>
+                        </div>
+                    </div>
+                `
+            },
+            5: {
+                badge: "Plan #5 • Week 5 (April 19)",
+                title: "Custom Reading 1: The Chameleon’s Secret Weapon",
+                source: "Custom Reading Passage (Unit 2 Vocabulary Extension)",
+                cnb: "CNB: Applies inference skills to novel short stories incorporating target vocabulary. Outcome: Correctly solves multiple-choice comprehension questions.",
+                habit: "Habit 5: Seek First to Understand, Then to Be Understood (Listening carefully to partner's reading reasoning).",
+                skills: "Inference, context clues, critical reading. Materials: Printed/Digital Custom Reading Card 1.",
+                tab1: `
+                    <div class="space-y-3">
+                        <p class="text-sm font-semibold text-gray-800"><strong>Warm-Up (5 min):</strong> "Eye Independence Challenge"</p>
+                        <p class="text-xs text-gray-600">Students try looking left with one eye and right with the other to experience how chameleons hunt insects!</p>
+                    </div>
+                `,
+                tab2: `
+                    <div class="space-y-4">
+                        <div class="bg-blue-50/50 p-3 rounded-lg border border-montano-blue">
+                            <p class="font-bold text-xs text-montano-blue uppercase mb-1">📖 Short Reading Passage 1:</p>
+                            <p class="text-xs italic text-gray-800">
+                                "In the warm rain forest understory, Leo the chameleon stays very quiet. He has amazing eyes that can look up and down at the same time. Leo does not smell food like a bear, nor does he taste with his feet like a butterfly. Instead, he uses his sharp eyes to spot a fat insect on a leaf. SWOOSH! His long, sticky tongue shoots out faster than a fly! With this secret weapon, Leo catches his dinner without moving his body."
+                            </p>
+                        </div>
+                        <p class="text-xs font-bold text-gray-700">Multiple Choice Comprehension Quest (Individual):</p>
+                        
+                        <button onclick="toggleAccordion('acc-w5')" class="bg-montano-blue text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-2">
+                            <i class="fa-solid fa-key"></i> Show/Hide Hidden Answer Key
+                        </button>
+                        <div id="acc-w5" class="collapsible-content bg-yellow-50 p-3 rounded-lg border border-yellow-300 mt-2 text-xs">
+                            1. B (Understory) | 2. A (His long, sticky tongue) | 3. C (Eyes looking up and down).
+                        </div>
+                    </div>
+                `,
+                tab3: `
+                    <div class="space-y-3">
+                        <p class="text-sm font-semibold text-gray-800"><strong>Cooperative Task (30 min):</strong> "Text Detective Pairs"</p>
+                        <p class="text-xs text-gray-600">Pairs solve the 3 multiple choice questions, underlining text evidence in two different color crayons (Red for Question 1, Blue for Question 2, Green for Question 3).</p>
+                    </div>
+                `,
+                tab4: `
+                    <div class="space-y-4">
+                        <p class="text-sm font-semibold text-gray-800"><strong>Plenary & Interactive Quiz (15 min):</strong> "Interactive MCQ Review"</p>
+                        <div class="bg-montano-bg p-3 rounded-xl border border-montano-olive">
+                            <p class="text-xs font-bold text-montano-blue mb-2">Q1: What is Leo's secret weapon to catch insects?</p>
+                            <div class="flex flex-col gap-1 mt-2">
+                                <button onclick="checkAnswer(this, false)" class="text-left px-2 py-1 bg-white border rounded text-xs">A) Sharp whiskers like a seal</button>
+                                <button onclick="checkAnswer(this, true)" class="text-left px-2 py-1 bg-white border rounded text-xs">B) A long, sticky tongue</button>
+                                <button onclick="checkAnswer(this, false)" class="text-left px-2 py-1 bg-white border rounded text-xs">C) A terrible stinky smell</button>
+                            </div>
+                            <div class="feedback-msg mt-2 text-xs font-bold hidden"></div>
+                        </div>
+                    </div>
+                `
+            },
+            6: {
+                badge: "Plan #6 • Week 6 (April 26)",
+                title: "Custom Reading 2: The Mystery of the Stinky Flower",
+                source: "Custom Reading Passage (Unit 2 Vocabulary Extension)",
+                cnb: "CNB: Analyzes cause-and-effect relationships in scientific descriptive passages. Outcome: Evaluates multiple choice items accurately.",
+                habit: "Habit 4: Think Win-Win (Supporting team members during collaborative reading analysis).",
+                skills: "Problem solving, cause-effect reasoning, academic discussion. Materials: Custom Reading Card 2.",
+                tab1: `
+                    <div class="space-y-3">
+                        <p class="text-sm font-semibold text-gray-800"><strong>Warm-Up (5 min):</strong> "Smell vs. Sight Quiz"</p>
+                        <p class="text-xs text-gray-600">Quick vote: "Would you rather have super sight like a chameleon or super smell like a bear?" Students explain choices in English.</p>
+                    </div>
+                `,
+                tab2: `
+                    <div class="space-y-4">
+                        <div class="bg-blue-50/50 p-3 rounded-lg border border-montano-blue">
+                            <p class="font-bold text-xs text-montano-blue uppercase mb-1">📖 Short Reading Passage 2:</p>
+                            <p class="text-xs italic text-gray-800">
+                                "Deep in the warm, wet rain forests of Asia grows a giant plant called the Rafflesia. It is almost one meter wide! Most flowers smell sweet to attract bees, but the Rafflesia smells like rotten meat. Why does it smell so terrible? It needs flies to visit it! Flies love stinky smells. They fly into the big flower, helping it grow new seeds. Nearby, an Eastern snake-necked turtle crawls out of the fresh water. It also smells terrible to protect itself from hungry predators!"
+                            </p>
+                        </div>
+
+                        <button onclick="toggleAccordion('acc-w6')" class="bg-montano-blue text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-2">
+                            <i class="fa-solid fa-key"></i> Show/Hide Hidden Answer Key
+                        </button>
+                        <div id="acc-w6" class="collapsible-content bg-yellow-50 p-3 rounded-lg border border-yellow-300 mt-2 text-xs">
+                            1. C (One meter wide) | 2. A (To attract flies that like bad smells) | 3. B (Fresh water).
+                        </div>
+                    </div>
+                `,
+                tab3: `
+                    <div class="space-y-3">
+                        <p class="text-sm font-semibold text-gray-800"><strong>Cooperative Task (30 min):</strong> "Cause & Effect Match-Up"</p>
+                        <p class="text-xs text-gray-600">Teams create a T-Chart on paper: Column 1: Cause (Rafflesia smells like meat) -> Column 2: Effect (Flies visit the flower). Solve 3 MCQ items as a group.</p>
+                    </div>
+                `,
+                tab4: `
+                    <div class="space-y-4">
+                        <p class="text-sm font-semibold text-gray-800"><strong>Plenary & Interactive Quiz (15 min):</strong> "Multiple Choice Challenge"</p>
+                        <div class="bg-montano-bg p-3 rounded-xl border border-montano-olive">
+                            <p class="text-xs font-bold text-montano-blue mb-2">Q: How big is the giant Rafflesia flower?</p>
+                            <div class="flex flex-col gap-1 mt-2">
+                                <button onclick="checkAnswer(this, false)" class="text-left px-2 py-1 bg-white border rounded text-xs">A) As small as a butterfly's foot</button>
+                                <button onclick="checkAnswer(this, true)" class="text-left px-2 py-1 bg-white border rounded text-xs">B) Almost one meter wide</button>
+                                <button onclick="checkAnswer(this, false)" class="text-left px-2 py-1 bg-white border rounded text-xs">C) 32 kilometers wide</button>
+                            </div>
+                            <div class="feedback-msg mt-2 text-xs font-bold hidden"></div>
+                        </div>
+                    </div>
+                `
+            },
+            7: {
+                badge: "Plan #7 • Week 7 (April 30)",
+                title: "Custom Reading 3: A Journey from the Rain Forest to Antarctica",
+                source: "Custom Reading Passage (Unit 2 Comprehensive Review)",
+                cnb: "CNB: Synthesizes vocabulary and concepts across multiple texts to answer global comprehension questions. Outcome: Achieves mastery in Unit 2 review quiz.",
+                habit: "Habit 7: Sharpen the Saw (Reflecting on reading growth and celebrating unit completion).",
+                skills: "Synthesis, review, self-reflection, decision making. Materials: Custom Reading Card 3.",
+                tab1: `
+                    <div class="space-y-3">
+                        <p class="text-sm font-semibold text-gray-800"><strong>Warm-Up (5 min):</strong> "Unit 2 Animal Rapid Fire"</p>
+                        <p class="text-xs text-gray-600">Teacher shows animal icons (Seal, Turtle, Penguin, Chameleon, Butterfly). Students shout out their super sense or habitat in English!</p>
+                    </div>
+                `,
+                tab2: `
+                    <div class="space-y-4">
+                        <div class="bg-blue-50/50 p-3 rounded-lg border border-montano-blue">
+                            <p class="font-bold text-xs text-montano-blue uppercase mb-1">📖 Short Reading Passage 3:</p>
+                            <p class="text-xs italic text-gray-800">
+                                "Earth is full of amazing animals and habitats! In the warm rain forest canopy, colorful birds and monkeys live near the tops of trees. Down on the dark forest floor, spiders as big as plates crawl quietly. But far away in Antarctica, it is dry, windy, and freezing cold! No tall trees grow there. Instead, emperor penguins keep their eggs safe on their feet, while Weddell seals dive deep under the ice to catch fish. Every animal has special body parts to survive!"
+                            </p>
+                        </div>
+
+                        <button onclick="toggleAccordion('acc-w7')" class="bg-montano-blue text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-2">
+                            <i class="fa-solid fa-key"></i> Show/Hide Hidden Answer Key
+                        </button>
+                        <div id="acc-w7" class="collapsible-content bg-yellow-50 p-3 rounded-lg border border-yellow-300 mt-2 text-xs">
+                            1. B (In the canopy) | 2. A (Antarctica) | 3. C (Keep eggs safe on feet).
+                        </div>
+                    </div>
+                `,
+                tab3: `
+                    <div class="space-y-3">
+                        <p class="text-sm font-semibold text-gray-800"><strong>Cooperative Task (30 min):</strong> "Unit 2 Master Trivia Tournament"</p>
+                        <p class="text-xs text-gray-600">Teams answer a 4-question Multiple Choice Quiz comparing Rain Forest vs. Antarctica. Each member must justify one answer using text facts.</p>
+                    </div>
+                `,
+                tab4: `
+                    <div class="space-y-4">
+                        <p class="text-sm font-semibold text-gray-800"><strong>Plenary & Final Review Quiz (15 min):</strong> "Pasapalabra / Unit Trivia"</p>
+                        <div class="bg-montano-bg p-3 rounded-xl border border-montano-olive">
+                            <p class="text-xs font-bold text-montano-blue mb-2">Q: Where do Weddell seals catch their fish?</p>
+                            <div class="flex flex-col gap-1 mt-2">
+                                <button onclick="checkAnswer(this, true)" class="text-left px-2 py-1 bg-white border rounded text-xs">A) Underwater beneath the Antarctic ice</button>
+                                <button onclick="checkAnswer(this, false)" class="text-left px-2 py-1 bg-white border rounded text-xs">B) On the top of tall rainforest trees</button>
+                                <button onclick="checkAnswer(this, false)" class="text-left px-2 py-1 bg-white border rounded text-xs">C) In fresh water rivers in Australia</button>
+                            </div>
+                            <div class="feedback-msg mt-2 text-xs font-bold hidden"></div>
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        // Current active week state
+        let currentWeek = 1;
+
+        // Switch Week Function
+        function switchWeek(weekNum) {
+            currentWeek = weekNum;
+            
+            // Update button styles
+            document.querySelectorAll('.week-btn').forEach((btn, idx) => {
+                if (idx + 1 === weekNum) {
+                    btn.className = "week-btn px-3 py-1.5 rounded-lg font-bold text-xs md:text-sm bg-montano-blue text-white shadow";
+                } else {
+                    btn.className = "week-btn px-3 py-1.5 rounded-lg font-bold text-xs md:text-sm bg-montano-bg text-montano-blue hover:bg-montano-lightblue";
+                }
+            });
+
+            // Load week data
+            const data = weeklyData[weekNum];
+            document.getElementById('week-badge').innerText = data.badge;
+            document.getElementById('lesson-title').innerText = data.title;
+            document.getElementById('lesson-source').innerText = data.source;
+
+            document.getElementById('pedagogy-cnb').innerText = data.cnb;
+            document.getElementById('pedagogy-habit').innerText = data.habit;
+            document.getElementById('pedagogy-skills').innerText = data.skills;
+
+            document.getElementById('tab1-content').innerHTML = data.tab1;
+            document.getElementById('tab2-content').innerHTML = data.tab2;
+            document.getElementById('tab3-content').innerHTML = data.tab3;
+            document.getElementById('tab4-content').innerHTML = data.tab4;
+
+            // Reset tab to tab1
+            switchTab('tab1');
+        }
+
+        // Switch Tab Function
+        function switchTab(tabId) {
+            // Hide all tab panels
+            document.querySelectorAll('.tab-panel').forEach(panel => {
+                panel.classList.add('hidden');
+            });
+            // Remove active style from all tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show current panel & activate button
+            document.getElementById(tabId).classList.remove('hidden');
+            document.getElementById('tab-btn-' + tabId).classList.add('active');
+        }
+
+        // Accordion Toggle for Hidden Solutions
+        function toggleAccordion(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.classList.toggle('open');
+            }
+        }
+
+        // Fullscreen Toggle
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().then(() => {
+                    document.getElementById('fullscreen-icon').className = "fa-solid fa-compress";
+                    document.getElementById('fullscreen-text').innerText = "Exit Fullscreen";
+                }).catch(err => {
+                    console.log(`Error attempting to enable fullscreen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                    document.getElementById('fullscreen-icon').className = "fa-solid fa-expand";
+                    document.getElementById('fullscreen-text').innerText = "Fullscreen";
+                }
+            }
+        }
+
+        // Interactive Quiz Answer Checker
+        function checkAnswer(btn, isCorrect) {
+            const parent = btn.closest('.bg-montano-bg');
+            const feedback = parent.querySelector('.feedback-msg');
+            feedback.classList.remove('hidden');
+
+            if (isCorrect) {
+                feedback.className = "feedback-msg mt-2 text-xs font-bold text-green-700 bg-green-100 p-2 rounded";
+                feedback.innerHTML = '<i class="fa-solid fa-circle-check"></i> Correct! Excellent reading comprehension!';
+            } else {
+                feedback.className = "feedback-msg mt-2 text-xs font-bold text-red-700 bg-red-100 p-2 rounded";
+                feedback.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> Try again! Re-read the passage details.';
+            }
+        }
+
+        // Rubric Calculator
+        function calculateScore() {
+            let total = 0;
+            const selects = document.querySelectorAll('.rubric-score');
+            selects.forEach(select => {
+                total += parseInt(select.value);
+            });
+            document.getElementById('total-score-val').innerText = total;
+        }
+
+        function resetRubric() {
+            const selects = document.querySelectorAll('.rubric-score');
+            selects.forEach(select => {
+                select.value = "3";
+            });
+            calculateScore();
+        }
+
+        // Initialize on load
+        window.onload = function() {
+            switchWeek(1);
+        };
+    </script>
+</body>
+</html>
